@@ -1,0 +1,6 @@
+1. Clear USB drive
+2. Load USB drive with podcasts
+3. Archive downloaded podcasts
+4. Clear USB drive, load USB drive with podcasts, and then archive downloaded podcasts
+5. Exit Program
+Please select menu item, and press the enter key.....

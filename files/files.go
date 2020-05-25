@@ -2,13 +2,14 @@ package files
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"bytes"
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -127,4 +128,14 @@ func Detect() ([]string, error) {
 	}
 
 	return drives, nil
+}
+
+//GetCurrentDirectory returns executing firectory
+func GetCurrentDirectory() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
+	return dir
+
 }
