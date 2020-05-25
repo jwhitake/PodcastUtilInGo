@@ -1,11 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"os"
 	"path"
 
 	"github.com/jwhitake/podcast/config"
@@ -25,7 +22,7 @@ func main() {
 	// 	fmt.Println(usbList)
 	// }
 
-    configuration := config.GetConfig()
+	configuration := config.GetConfig()
 	dirList, err := files.GetSubDirectories(configuration.SourcePath)
 	if err != nil {
 		log.Fatal(err)
