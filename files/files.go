@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"bytes"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -28,8 +30,8 @@ func ReadFile(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
-//GetDirectoryContents is for
-func GetDirectoryContents(path string) ([]string, error) {
+//GetSubDirectories is for
+func GetSubDirectories(path string) ([]string, error) {
 	listing, err := ioutil.ReadDir(path)
 	var dirList []string
 	for _, dir := range listing {
@@ -39,6 +41,19 @@ func GetDirectoryContents(path string) ([]string, error) {
 		}
 	}
 	return dirList, err
+}
+
+//GetDirectoryFileNames is for
+func GetDirectoryFileNames(path string) ([]string, error) {
+	var files []string
+	fileInfo, err := ioutil.ReadDir(path)
+	if err != nil {
+		return files, err
+	}
+	for _, file := range fileInfo {
+		files = append(files, file.Name())
+	}
+	return files, nil
 }
 
 //DeleteFilesByExtension is for
@@ -54,7 +69,7 @@ func DeleteFilesByExtension(path, ext string) {
 	}
 }
 
-//Copy is for 
+//Copy is for
 func Copy(src, dst string) (int64, error) {
 	sourceFileStat, err := os.Stat(src)
 	if err != nil {
@@ -78,4 +93,38 @@ func Copy(src, dst string) (int64, error) {
 	defer destination.Close()
 	nBytes, err := io.Copy(destination, source)
 	return nBytes, err
+}
+
+// Detect returns a list of file paths pointing to the root folder of
+// USB storage devices connected to the system.
+// Source: https://github.com/deepakjois/gousbdrivedetector
+func Detect() ([]string, error) {
+	var drives []string
+	driveMap := make(map[string]bool)
+
+	cmd := "wmic"
+	args := []string{"logicaldisk", "where", "drivetype=2", "get", "deviceid"}
+	out, err := exec.Command(cmd, args...).Output()
+
+	if err != nil {
+		return drives, err
+	}
+
+	s := bufio.NewScanner(bytes.NewReader(out))
+	for s.Scan() {
+		line := s.Text()
+		if strings.Contains(line, ":") {
+			rootPath := strings.TrimSpace(line) + string(os.PathSeparator)
+			driveMap[rootPath] = true
+		}
+	}
+
+	for k := range driveMap {
+		_, err := os.Open(k)
+		if err == nil {
+			drives = append(drives, k)
+		}
+	}
+
+	return drives, nil
 }

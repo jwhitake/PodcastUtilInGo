@@ -1,36 +1,25 @@
 package main
 
 import (
-	"github.com/jwhitake/podcast/config"
-	"github.com/jwhitake/podcast/files"
 	"fmt"
 	"log"
 	"path"
+
+	"github.com/jwhitake/podcast/config"
+	"github.com/jwhitake/podcast/files"
 )
 
 func main() {
-	// filePath := "C:/todel"
 
-	// absolutePath := path.Join(filePath, "test.txt")
-	// fmt.Println(absolutePath)
-
-	// testBase := path.Base(absolutePath)
-	// fmt.Println(testBase)
-
-	// testDir := path.Dir(absolutePath)
-	// fmt.Println(testDir)
-
-	// testExt := path.Ext(absolutePath)
-	// fmt.Println(testExt)
-
-	// dir, file := path.Split(absolutePath)
-	// fmt.Println(dir)
-	// fmt.Println(file)
+	// test, err := files.Detect()
+	// for _, usbList := range test {
+	// 	fmt.Println(usbList)
+	// }
 
 	podPath := config.PodPath
 	fmt.Println(podPath)
 
-	dirList, err := files.GetDirectoryContents(podPath)
+	dirList, err := files.GetSubDirectories(podPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,22 +27,22 @@ func main() {
 		fmt.Println(list)
 		dirName := dirList[index]
 		absolutePath := path.Join(podPath, dirName)
-		fileList, err := files.GetDirectoryContents(absolutePath)
-		if err != nil{
+		fileList, err := files.GetDirectoryFileNames(absolutePath)
+		fmt.Println(absolutePath)
+		if err != nil {
 			log.Fatal(err)
 		}
-		for i := range fileList{
+		for i := range fileList {
 			fileName := fileList[i]
 			fmt.Println(fileName)
-		}
-		
-	}
 
-	// lines, err := files.ReadFile(path)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// for _, line := range lines {
-	// 	fmt.Println(line)
-	// }
+			lines, err := files.ReadFile(path.Join(absolutePath, fileName))
+			if err != nil {
+				log.Fatal(err)
+			}
+			for _, line := range lines {
+				fmt.Println(line)
+			}
+		}
+	}
 }
