@@ -17,7 +17,7 @@ type Configuration struct {
 }
 
 
-//GetConfig loads and returnsa a Configuration struct
+//GetConfig loads and returns a Configuration struct
 func GetConfig() Configuration{
 	currentPath := files.GetCurrentDirectory()
 	jsonFile, err := os.Open(currentPath + "/config.json")
